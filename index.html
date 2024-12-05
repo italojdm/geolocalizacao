@@ -10,7 +10,8 @@
         #header-image { width: 20%; height: auto; display: block; margin: 0 auto 20px; }
         #coordinates { margin-top: 20px; }
         #map { width: 100%; height: 400px; margin-top: 20px; display: none; }
-        .buttons, .input-group { margin-top: 10px; }
+        .buttons { margin-top: 10px; }
+        .input-group { margin-top: 10px; }
         button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin-right: 10px; }
         button:disabled { background-color: #cccccc; cursor: not-allowed; }
         #copyButton { display: none; }
@@ -29,7 +30,7 @@
 <h3>Capturar a localização atual</h3>
 
 <div class="input-group">
-    <label for="clientCode">Código do Cliente:</label>
+    <label for="clientCode">Código do Cliente:</label><br>
     <input type="text" id="clientCode" placeholder="Insira o código do cliente" 
            oninput="validateClientCode()" maxlength="7" />
 </div>
