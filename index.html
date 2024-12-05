@@ -93,7 +93,7 @@
 
     <div class="input-group">
         <input type="text" id="clientCode" placeholder="Insira o código do cliente" oninput="validateClientCode()"
-            maxlength="6" />
+            maxlength="7" />
     </div>
 
     <div class="buttons">
@@ -118,7 +118,7 @@
 
             // Expressão regular para validar o código
             // Começa com "C" ou "c", seguido de exatamente 5 a 5 dígitos
-            const regex = /^[Cc]\d{5,5}$/;
+            const regex = /^[Cc]\d{6,6}$/;
 
             // Valida o código usando a expressão regular
             if (regex.test(clientCode)) {
