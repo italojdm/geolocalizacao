@@ -32,12 +32,22 @@
 
         .buttons {
             margin-top: 10px;
-            margin-right: 0px;
         }
 
-        .input-group {
-            margin-top: 10px;
-            margin-right: 12px;
+        #camera-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        #video {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        #photo {
+            display: none;
+            width: 100%;
+            max-width: 400px;
         }
 
         button {
@@ -50,25 +60,6 @@
         button:disabled {
             background-color: #cccccc;
             cursor: not-allowed;
-        }
-
-        #copyButton {
-            display: none;
-        }
-
-        #restartButton {
-            display: none;
-        }
-
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-            width: 200px;
-            text-align: center;
-        }
-
-        input:disabled {
-            background-color: #f0f0f0;
         }
 
         footer {
@@ -84,108 +75,67 @@
 </head>
 
 <body>
-    <br>
-    <h2>Capturar a localização atual</h2><br>
-    
-    <img id="header-image" src="gagliardi.png" alt="Imagem de Geolocalização"><br>
+    <h2>Capturar a localização atual</h2>
+    <img id="header-image" src="gagliardi.png" alt="Imagem de Geolocalização">
 
-    <p id="coordinates" aria-live="polite">Informe o código do cliente e clique no botão abaixo para obter suas coordenadas.</p>
+    <p id="coordinates">Informe o código do cliente e clique no botão abaixo para obter suas coordenadas.</p>
 
-    <div class="input-group">
-        <input type="text" id="clientCode" placeholder="Insira o código do cliente" oninput="validateClientCode()"
-            maxlength="7" />
-    </div>
-
+    <input type="text" id="clientCode" placeholder="Insira o código do cliente" oninput="validateClientCode()" maxlength="7" />
     <div class="buttons">
         <button id="getLocationButton" onclick="getLocation()" disabled>Obter Coordenadas</button>
-        <button id="copyButton" onclick="copyCoordinates()">Copiar Coordenadas</button>
+        <button id="copyButton" onclick="copyCoordinates()">Copiar Dados</button>
         <button id="restartButton" onclick="restartProcess()">Reiniciar</button>
+    </div>
+
+    <div id="camera-container">
+        <video id="video" autoplay></video>
+        <button onclick="capturePhoto()">Tirar Foto</button>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <img id="photo" alt="Foto Capturada">
     </div>
 
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        let map;
-        let marker;
-        let currentCoordinates = ""; // Armazena as coordenadas atuais
-        let currentClientCode = ""; // Armazena o código do cliente
+        let map, marker, currentCoordinates = "", currentClientCode = "", photoData = "";
 
         function validateClientCode() {
             const clientCodeInput = document.getElementById("clientCode");
             const getLocationButton = document.getElementById("getLocationButton");
-            const clientCode = clientCodeInput.value.trim();
+            const regex = /^[Cc]\d{6}$/;
 
-            // Expressão regular para validar o código
-            // Começa com "C" ou "c", seguido de exatamente 6 dígitos
-            const regex = /^[Cc]\d{6,6}$/;
-
-            // Valida o código usando a expressão regular
-            if (regex.test(clientCode)) {
-                getLocationButton.disabled = false;
-            } else {
-                getLocationButton.disabled = true;
-            }
+            getLocationButton.disabled = !regex.test(clientCodeInput.value.trim());
         }
 
-
-        function getLocation() {
-            const clientCodeInput = document.getElementById("clientCode");
-            const coordinatesElement = document.getElementById("coordinates");
-            const copyButton = document.getElementById("copyButton");
-            const restartButton = document.getElementById("restartButton");
-            const getLocationButton = document.getElementById("getLocationButton");
-
-            currentClientCode = clientCodeInput.value.trim();
-            clientCodeInput.disabled = true; // Desabilita o campo
-            getLocationButton.disabled = true; // Desabilita o botão "Obter Coordenadas"
+        async function getLocation() {
+            currentClientCode = document.getElementById("clientCode").value.trim();
+            document.getElementById("clientCode").disabled = true;
+            document.getElementById("getLocationButton").disabled = true;
 
             if (navigator.geolocation) {
-                coordinatesElement.innerHTML = `Obtendo localização...`;
+                document.getElementById("coordinates").innerText = "Obtendo localização...";
                 navigator.geolocation.getCurrentPosition(
-                    position => {
+                    async position => {
                         const { latitude, longitude } = position.coords;
                         currentCoordinates = `Latitude: ${latitude}, Longitude: ${longitude}`;
                         showPosition(latitude, longitude);
                         initMap(latitude, longitude);
-                        copyButton.style.display = "inline-block"; // Exibe o botão de copiar
-                        restartButton.style.display = "inline-block"; // Exibe o botão de reiniciar
+                        await startCamera();
+                        document.getElementById("copyButton").style.display = "inline-block";
+                        document.getElementById("restartButton").style.display = "inline-block";
                     },
                     showError,
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0
-                    }
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
                 );
             } else {
-                alert("A Geolocalização não é suportada por este navegador.");
+                alert("Geolocalização não suportada.");
             }
         }
 
         function showPosition(latitude, longitude) {
-            document.getElementById("coordinates").innerHTML =
+            document.getElementById("coordinates").innerHTML = 
                 `Código do Cliente: ${currentClientCode}<br>Latitude: ${latitude}, Longitude: ${longitude}`;
-        }
-
-        function showError(error) {
-            let message = "";
-            switch (error.code) {
-                case error.PERMISSION_DENIED:
-                    message = "Usuário negou a solicitação de geolocalização.";
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    message = "A posição não está disponível.";
-                    break;
-                case error.TIMEOUT:
-                    message = "A solicitação de geolocalização expirou.";
-                    break;
-                case error.UNKNOWN_ERROR:
-                    message = "Erro desconhecido.";
-                    break;
-            }
-            alert(message);
-            document.getElementById("coordinates").innerHTML = "Erro ao obter localização.";
         }
 
         function initMap(latitude, longitude) {
@@ -207,42 +157,46 @@
             } else {
                 marker.setLatLng([latitude, longitude]);
             }
-
             marker.bindPopup("Você está aqui!").openPopup();
+        }
+
+        async function startCamera() {
+            const cameraContainer = document.getElementById("camera-container");
+            const video = document.getElementById("video");
+
+            cameraContainer.style.display = "block";
+
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+        }
+
+        function capturePhoto() {
+            const canvas = document.getElementById("canvas");
+            const video = document.getElementById("video");
+            const photo = document.getElementById("photo");
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0);
+            photoData = canvas.toDataURL("image/png");
+
+            photo.src = photoData;
+            photo.style.display = "block";
         }
 
         function copyCoordinates() {
             const textToCopy = `Código do Cliente: ${currentClientCode}\n${currentCoordinates}`;
             navigator.clipboard.writeText(textToCopy).then(() => {
                 alert("Dados copiados para a área de transferência!");
-            }).catch(err => {
-                alert("Erro ao copiar dados. Tente novamente.");
-                console.error(err);
             });
         }
 
         function restartProcess() {
-            document.getElementById("clientCode").disabled = false;
-            document.getElementById("clientCode").value = "";
-            document.getElementById("getLocationButton").disabled = true;
-            document.getElementById("copyButton").style.display = "none";
-            document.getElementById("restartButton").style.display = "none";
-            document.getElementById("coordinates").innerHTML = "Clique no botão abaixo para obter suas coordenadas.";
-            const mapElement = document.getElementById("map");
-            mapElement.style.display = "none";
-
-            if (map) {
-                map.remove();
-                map = null;
-                marker = null;
-            }
+            location.reload();
         }
     </script>
 
-    <footer>
-        O Grupo gagliardi não armazena ou compartilha as coordenadas obtidas sem sua permissão.
-    </footer>
-
+    <footer>O Grupo Gagliardi não armazena ou compartilha coordenadas sem sua permissão.</footer>
 </body>
 
 </html>
