@@ -89,12 +89,12 @@
     
     <img id="header-image" src="gagliardi.png" alt="Imagem de Geolocalização"><br>
 
+    <p id="coordinates" aria-live="polite">Informe o código do cliente e clique no botão abaixo para obter suas coordenadas.</p>
+
     <div class="input-group">
         <input type="text" id="clientCode" placeholder="Insira o código do cliente" oninput="validateClientCode()"
             maxlength="6" />
     </div>
-
-    <p id="coordinates" aria-live="polite">Clique no botão abaixo para obter suas coordenadas.</p>
 
     <div class="buttons">
         <button id="getLocationButton" onclick="getLocation()" disabled>Obter Coordenadas</button>
