@@ -1,182 +1,248 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Captura de Coordenadas</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        #header-image { width: 20%; height: auto; display: block; margin: 0 auto 20px; }
-        #coordinates { margin-top: 20px; }
-        #map { width: 100%; height: 400px; margin-top: 20px; display: none; }
-        .buttons { margin-top: 10px; margin-right: 0px; }
-        .input-group { margin-top: 10px; margin-right: 12px; }
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin-right: 10px; }
-        button:disabled { background-color: #cccccc; cursor: not-allowed; }
-        #copyButton { display: none; }
-        #restartButton { display: none; }
-        input[type="text"] { padding: 10px; font-size: 16px; width: 200px; }
-        input:disabled { background-color: #f0f0f0; }
-        footer { margin-top: 30px; font-size: 12px; color: #555; }
-        h1 { margin: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #header-image {
+            width: 20%;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px;
+        }
+
+        #coordinates {
+            margin-top: 20px;
+        }
+
+        #map {
+            width: 100%;
+            height: 400px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .buttons {
+            margin-top: 10px;
+            margin-right: 0px;
+        }
+
+        .input-group {
+            margin-top: 10px;
+            margin-right: 12px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #copyButton {
+            display: none;
+        }
+
+        #restartButton {
+            display: none;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 200px;
+            text-align: center;
+        }
+
+        input:disabled {
+            background-color: #f0f0f0;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        h1 {
+            margin: 0;
+        }
     </style>
 </head>
+
 <body>
 
-<h1>Capturar a localização atual</h1><br>
-    
-<img id="header-image" src="gagliardi.png" alt="Imagem de Geolocalização"><br>
+    <h1>Capturar a localização atual</h1><br>
 
-<div class="input-group">
-    <input type="text" id="clientCode" placeholder="Insira o código do cliente" 
-           oninput="validateClientCode()" maxlength="7" />
-</div>
+    <img id="header-image" src="gagliardi.png" alt="Imagem de Geolocalização"><br>
 
-<p id="coordinates" aria-live="polite">Clique no botão abaixo para obter suas coordenadas.</p>
+    <div class="input-group">
+        <input type="text" id="clientCode" placeholder="Insira o código do cliente" oninput="validateClientCode()"
+            maxlength="6" />
+    </div>
 
-<div class="buttons">
-    <button id="getLocationButton" onclick="getLocation()" disabled>Obter Coordenadas</button>
-    <button id="copyButton" onclick="copyCoordinates()">Copiar Coordenadas</button>
-    <button id="restartButton" onclick="restartProcess()">Reiniciar</button>
-</div>
+    <p id="coordinates" aria-live="polite">Clique no botão abaixo para obter suas coordenadas.</p>
 
-<div id="map"></div>
+    <div class="buttons">
+        <button id="getLocationButton" onclick="getLocation()" disabled>Obter Coordenadas</button>
+        <button id="copyButton" onclick="copyCoordinates()">Copiar Coordenadas</button>
+        <button id="restartButton" onclick="restartProcess()">Reiniciar</button>
+    </div>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-    let map;
-    let marker;
-    let currentCoordinates = ""; // Armazena as coordenadas atuais
-    let currentClientCode = ""; // Armazena o código do cliente
+    <div id="map"></div>
 
-    function validateClientCode() {
-        const clientCodeInput = document.getElementById("clientCode");
-        const getLocationButton = document.getElementById("getLocationButton");
-        const clientCode = clientCodeInput.value.trim();
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        let map;
+        let marker;
+        let currentCoordinates = ""; // Armazena as coordenadas atuais
+        let currentClientCode = ""; // Armazena o código do cliente
 
-        // Verifica se o código inicia com 'C' e possui entre 2 e 7 caracteres
-        if (clientCode.length >= 2 && clientCode.length <= 7 && clientCode.startsWith("C")) {
-            getLocationButton.disabled = false;
-        } else {
-            getLocationButton.disabled = true;
-        }
-    }
+        function validateClientCode() {
+            const clientCodeInput = document.getElementById("clientCode");
+            const getLocationButton = document.getElementById("getLocationButton");
+            const clientCode = clientCodeInput.value.trim();
 
-    function getLocation() {
-        const clientCodeInput = document.getElementById("clientCode");
-        const coordinatesElement = document.getElementById("coordinates");
-        const copyButton = document.getElementById("copyButton");
-        const restartButton = document.getElementById("restartButton");
-        const getLocationButton = document.getElementById("getLocationButton");
+            // Expressão regular para validar o código
+            // Começa com "C" ou "c", seguido de exatamente 5 a 5 dígitos
+            const regex = /^[Cc]\d{5,5}$/;
 
-        currentClientCode = clientCodeInput.value.trim();
-        clientCodeInput.disabled = true; // Desabilita o campo
-        getLocationButton.disabled = true; // Desabilita o botão "Obter Coordenadas"
-
-        if (navigator.geolocation) {
-            coordinatesElement.innerHTML = `Obtendo localização para o código do cliente: ${currentClientCode}...`;
-            navigator.geolocation.getCurrentPosition(
-                position => {
-                    const { latitude, longitude } = position.coords;
-                    currentCoordinates = `Latitude: ${latitude}, Longitude: ${longitude}`;
-                    showPosition(latitude, longitude);
-                    initMap(latitude, longitude);
-                    copyButton.style.display = "inline-block"; // Exibe o botão de copiar
-                    restartButton.style.display = "inline-block"; // Exibe o botão de reiniciar
-                },
-                showError,
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-        } else {
-            alert("A Geolocalização não é suportada por este navegador.");
-        }
-    }
-
-    function showPosition(latitude, longitude) {
-        document.getElementById("coordinates").innerHTML = 
-            `Código do Cliente: ${currentClientCode}<br>Latitude: ${latitude}, Longitude: ${longitude}`;
-    }
-
-    function showError(error) {
-        let message = "";
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                message = "Usuário negou a solicitação de geolocalização.";
-                break;
-            case error.POSITION_UNAVAILABLE:
-                message = "A posição não está disponível.";
-                break;
-            case error.TIMEOUT:
-                message = "A solicitação de geolocalização expirou.";
-                break;
-            case error.UNKNOWN_ERROR:
-                message = "Erro desconhecido.";
-                break;
-        }
-        alert(message);
-        document.getElementById("coordinates").innerHTML = "Erro ao obter localização.";
-    }
-
-    function initMap(latitude, longitude) {
-        const mapElement = document.getElementById("map");
-        mapElement.style.display = "block";
-
-        if (!map) {
-            map = L.map(mapElement).setView([latitude, longitude], 15);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-        } else {
-            map.setView([latitude, longitude], 15);
+            // Valida o código usando a expressão regular
+            if (regex.test(clientCode)) {
+                getLocationButton.disabled = false;
+            } else {
+                getLocationButton.disabled = true;
+            }
         }
 
-        if (!marker) {
-            marker = L.marker([latitude, longitude]).addTo(map);
-        } else {
-            marker.setLatLng([latitude, longitude]);
+
+        function getLocation() {
+            const clientCodeInput = document.getElementById("clientCode");
+            const coordinatesElement = document.getElementById("coordinates");
+            const copyButton = document.getElementById("copyButton");
+            const restartButton = document.getElementById("restartButton");
+            const getLocationButton = document.getElementById("getLocationButton");
+
+            currentClientCode = clientCodeInput.value.trim();
+            clientCodeInput.disabled = true; // Desabilita o campo
+            getLocationButton.disabled = true; // Desabilita o botão "Obter Coordenadas"
+
+            if (navigator.geolocation) {
+                coordinatesElement.innerHTML = `Obtendo localização...`;
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const { latitude, longitude } = position.coords;
+                        currentCoordinates = `Latitude: ${latitude}, Longitude: ${longitude}`;
+                        showPosition(latitude, longitude);
+                        initMap(latitude, longitude);
+                        copyButton.style.display = "inline-block"; // Exibe o botão de copiar
+                        restartButton.style.display = "inline-block"; // Exibe o botão de reiniciar
+                    },
+                    showError,
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                alert("A Geolocalização não é suportada por este navegador.");
+            }
         }
 
-        marker.bindPopup("Você está aqui!").openPopup();
-    }
-
-    function copyCoordinates() {
-        const textToCopy = `Código do Cliente: ${currentClientCode}\n${currentCoordinates}`;
-        navigator.clipboard.writeText(textToCopy).then(() => {
-            alert("Dados copiados para a área de transferência!");
-        }).catch(err => {
-            alert("Erro ao copiar dados. Tente novamente.");
-            console.error(err);
-        });
-    }
-
-    function restartProcess() {
-        document.getElementById("clientCode").disabled = false;
-        document.getElementById("clientCode").value = "";
-        document.getElementById("getLocationButton").disabled = true;
-        document.getElementById("copyButton").style.display = "none";
-        document.getElementById("restartButton").style.display = "none";
-        document.getElementById("coordinates").innerHTML = "Clique no botão abaixo para obter suas coordenadas.";
-        const mapElement = document.getElementById("map");
-        mapElement.style.display = "none";
-
-        if (map) {
-            map.remove();
-            map = null;
-            marker = null;
+        function showPosition(latitude, longitude) {
+            document.getElementById("coordinates").innerHTML =
+                `Código do Cliente: ${currentClientCode}<br>Latitude: ${latitude}, Longitude: ${longitude}`;
         }
-    }
-</script>
 
-<footer>
-    O Grupo gagliardi não armazena ou compartilha as coordenadas obtidas sem sua permissão.<br>
-    Grupo Gagliardi.
-</footer>
+        function showError(error) {
+            let message = "";
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    message = "Usuário negou a solicitação de geolocalização.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message = "A posição não está disponível.";
+                    break;
+                case error.TIMEOUT:
+                    message = "A solicitação de geolocalização expirou.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    message = "Erro desconhecido.";
+                    break;
+            }
+            alert(message);
+            document.getElementById("coordinates").innerHTML = "Erro ao obter localização.";
+        }
+
+        function initMap(latitude, longitude) {
+            const mapElement = document.getElementById("map");
+            mapElement.style.display = "block";
+
+            if (!map) {
+                map = L.map(mapElement).setView([latitude, longitude], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+            } else {
+                map.setView([latitude, longitude], 15);
+            }
+
+            if (!marker) {
+                marker = L.marker([latitude, longitude]).addTo(map);
+            } else {
+                marker.setLatLng([latitude, longitude]);
+            }
+
+            marker.bindPopup("Você está aqui!").openPopup();
+        }
+
+        function copyCoordinates() {
+            const textToCopy = `Código do Cliente: ${currentClientCode}\n${currentCoordinates}`;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert("Dados copiados para a área de transferência!");
+            }).catch(err => {
+                alert("Erro ao copiar dados. Tente novamente.");
+                console.error(err);
+            });
+        }
+
+        function restartProcess() {
+            document.getElementById("clientCode").disabled = false;
+            document.getElementById("clientCode").value = "";
+            document.getElementById("getLocationButton").disabled = true;
+            document.getElementById("copyButton").style.display = "none";
+            document.getElementById("restartButton").style.display = "none";
+            document.getElementById("coordinates").innerHTML = "Clique no botão abaixo para obter suas coordenadas.";
+            const mapElement = document.getElementById("map");
+            mapElement.style.display = "none";
+
+            if (map) {
+                map.remove();
+                map = null;
+                marker = null;
+            }
+        }
+    </script>
+
+    <footer>
+        O Grupo gagliardi não armazena ou compartilha as coordenadas obtidas sem sua permissão.
+    </footer>
 
 </body>
+
 </html>
