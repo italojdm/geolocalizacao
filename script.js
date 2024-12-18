@@ -57,10 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
           longitude: position.coords.longitude,
         };
 
-        info.textContent = `
-          Código: ${clientCode}
-          Latitude: ${locationData.latitude.toFixed(6)}
-          Longitude: ${locationData.longitude.toFixed(6)}
+        // Exibindo as informações em linhas separadas e centralizadas
+        info.innerHTML = `
+          <strong>Código do Cliente:</strong><br>${clientCode}<br><br>
+          <strong>Latitude:</strong><br>${locationData.latitude.toFixed(6)}<br><br>
+          <strong>Longitude:</strong><br>${locationData.longitude.toFixed(6)}
         `;
 
         shareButton.style.display = 'block';
@@ -82,41 +83,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     } catch (error) {
-      console.error('Erro ao capturar foto ou localização:', error);
-      alert('Não foi possível capturar a foto ou obter a localização.');
+      console.error('Erro ao acessar a câmera ou localização:', error);
+      alert('Erro ao acessar a câmera ou a localização!');
     }
   });
 
   restartProcessButton.addEventListener('click', () => {
-    clientCodeInput.value = '';
-    photoPreview.style.display = 'none';
-    info.textContent = '';
-    shareButton.style.display = 'none';
-    restartProcessButton.style.display = 'none';
-
-    if (map) {
-      map.remove();
-      map = null;
-    }
+    location.reload();
   });
 
   shareButton.addEventListener('click', () => {
-    if (navigator.share) {
-      const data = {
-        title: 'Dados do Cliente',
-        text: `
-          Código: ${clientCode}
-          Latitude: ${locationData.latitude.toFixed(6)}
-          Longitude: ${locationData.longitude.toFixed(6)}
-        `,
-        files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })],
-      };
-
-      navigator.share(data).catch((error) => {
-        console.error('Erro ao compartilhar:', error);
-      });
-    } else {
-      alert('O compartilhamento nativo não é suportado neste dispositivo.');
-    }
+    const shareData = {
+      title: 'Cadastro de Cliente',
+      text: `Código do Cliente: ${clientCode}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}`,
+      files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })],
+    };
+    navigator.share(shareData).catch((error) => console.log('Erro ao compartilhar:', error));
   });
 });
