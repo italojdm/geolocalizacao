@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Captura de Coordenadas</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-</head>
-<body>
-  <div class="container">
-    <header>
-      <img id="header-image" src="gagliardi.png" alt="Imagem de Geolocalização">
-    </header>
-    
-    <h1>Captura de Coordenadas</h1>
-    <form id="client-form">
-      <label for="client-code">Digite o Código do Cliente:</label>
-      <input type="text" id="client-code" maxlength="7" placeholder="Ex: C123456" required>
-      <div class="buttons">
-        <button type="button" id="capture-photo">Capturar Geolocalização</button>
-      </div>
-    </form>
 
-    <div id="preview">
-      <h2>Prévia</h2>
-      <img id="photo-preview" alt="Prévia da Foto" style="display: none;">
-      <p id="info"></p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cliente</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <!-- Imagem no cabeçalho -->
+            <img id="header-image" src="gagliardi.png" alt="Imagem de Geolocalização">
+        </header>
+
+        <h1>Cadastro de Cliente</h1>
+        <form id="client-form">
+            <label for="client-code">Código do Cliente:</label>
+            <input type="text" id="client-code" maxlength="7" placeholder="C123456" required>
+            <div class="buttons">
+                <button type="button" id="capture-photo">Capturar Foto</button>
+                <button type="button" id="restart-process" style="display: none;">Recomeçar</button>
+            </div>
+        </form>
+
+        <div id="preview">
+            <h2>Prévia</h2>
+            <img id="photo-preview" alt="Prévia da Foto" style="display: none;">
+            <p id="info"></p>
+        </div>
+
+        <div id="map"></div>
+
+        <button id="share-data" style="display: none;">Compartilhar Dados</button>
     </div>
 
-    <div id="map"></div>
-    <button type="button" id="restart-process" style="display: none;">Cancelar</button>
-    <button id="share-data" style="display: none;">Compartilhar localização</button>
-  </div>
-  
-  <footer>
-    O Grupo Gagliardi não armazena ou compartilha as coordenadas obtidas sem sua permissão.
-  </footer>
+    <!-- Rodapé -->
+    <footer>
+        O Grupo Gagliardi não armazena ou compartilha as coordenadas obtidas sem sua permissão.
+    </footer>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="script.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
 </body>
+
 </html>
