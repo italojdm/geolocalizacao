@@ -57,10 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
           longitude: position.coords.longitude,
         };
 
-        // Exibindo as informações em linhas separadas e centralizadas
         info.innerHTML = `
-          <strong>Código do Cliente:</strong><br>${clientCode}<br><br>
-          <strong>Latitude:</strong><br>${locationData.latitude.toFixed(6)}<br><br>
+          <strong>Código do Cliente:</strong><br>${clientCode}<br>
+          <strong>Latitude:</strong><br>${locationData.latitude.toFixed(6)}<br>
           <strong>Longitude:</strong><br>${locationData.longitude.toFixed(6)}
         `;
 
