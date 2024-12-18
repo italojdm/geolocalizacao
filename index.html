@@ -5,9 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Cliente</title>
-    <!-- Estilo -->
     <link rel="stylesheet" href="styles.css">
-    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 
@@ -17,7 +15,10 @@
         <form id="client-form">
             <label for="client-code">Código do Cliente:</label>
             <input type="text" id="client-code" maxlength="7" placeholder="C123456" required>
-            <button type="button" id="capture-photo">Capturar Foto</button>
+            <div class="buttons">
+                <button type="button" id="capture-photo">Capturar Foto</button>
+                <button type="button" id="restart-process" style="display: none;">Recomeçar</button>
+            </div>
         </form>
 
         <div id="preview">
@@ -26,13 +27,11 @@
             <p id="info"></p>
         </div>
 
-        <div id="map" style="height: 300px; margin-top: 20px;"></div>
+        <div id="map"></div>
 
         <button id="share-data" style="display: none;">Compartilhar Dados</button>
     </div>
-    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <!-- Script do projeto -->
     <script src="script.js"></script>
 </body>
 
