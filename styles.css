@@ -6,17 +6,19 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  min-height: 100vh;
   background-color: #f4f4f4;
+  box-sizing: border-box;
 }
 
 .container {
   width: 90%;
-  max-width: 400px;
+  max-width: 500px;
   background: #fff;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 h1,
@@ -28,6 +30,8 @@ h2 {
 label {
   display: block;
   margin: 10px 0 5px;
+  font-size: 14px;
+  color: #555;
 }
 
 input,
@@ -37,12 +41,13 @@ button {
   margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
 button {
   background: #007bff;
   color: white;
-  font-size: 16px;
   cursor: pointer;
   transition: background 0.3s ease;
 }
@@ -51,18 +56,39 @@ button:hover {
   background: #0056b3;
 }
 
-/* Estilo para o mapa */
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.buttons button {
+  flex: 1;
+}
+
 #map {
   height: 300px;
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 5px;
+  margin: 10px 0;
 }
 
-/* Estilo para a prévia da imagem */
-#preview img {
+#photo-preview {
   max-width: 100%;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin: 10px 0;
+}
+
+@media screen and (max-width: 500px) {
+
+  h1,
+  h2 {
+    font-size: 18px;
+  }
+
+  button {
+    font-size: 13px;
+    padding: 8px;
+  }
 }
