@@ -1,4 +1,12 @@
 /* Estilo geral */
+
+#header-image {
+  width: 40%;
+  height: auto;
+  display: block;
+  margin: 0 auto 20px;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
