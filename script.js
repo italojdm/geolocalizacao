@@ -57,9 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
           longitude: position.coords.longitude,
         };
 
+        // Exibindo as informações em linhas separadas e centralizadas
         info.innerHTML = `
-          <strong>Código do Cliente:</strong><br>${clientCode}<br>
-          <strong>Latitude:</strong><br>${locationData.latitude.toFixed(6)}<br>
+          <strong>Código do Cliente:</strong><br>${clientCode}<br><br>
+          <strong>Latitude:</strong><br>${locationData.latitude.toFixed(6)}<br><br>
           <strong>Longitude:</strong><br>${locationData.longitude.toFixed(6)}
         `;
 
@@ -91,12 +92,32 @@ document.addEventListener('DOMContentLoaded', () => {
     location.reload();
   });
 
-  shareButton.addEventListener('click', () => {
-    const shareData = {
-      title: 'Cadastro de Cliente',
-      text: `Código do Cliente: ${clientCode}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}`,
-      files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })],
-    };
-    navigator.share(shareData).catch((error) => console.log('Erro ao compartilhar:', error));
+  shareButton.addEventListener('click', async () => {
+    const textData = `Código do Cliente: ${clientCode}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}`;
+
+    // Verifica se o navegador suporta compartilhamento de arquivos
+    if (navigator.canShare && navigator.canShare({ files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })] })) {
+      try {
+        const shareData = {
+          title: 'Cadastro de Cliente',
+          text: textData,
+          files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })],
+        };
+        await navigator.share(shareData);
+      } catch (error) {
+        console.log('Erro ao compartilhar:', error);
+        alert('Erro ao compartilhar os dados.');
+      }
+    } else if (navigator.share) {
+      // Caso não suporte arquivos, compartilha apenas o texto
+      try {
+        await navigator.share({ title: 'Cadastro de Cliente', text: textData });
+      } catch (error) {
+        console.log('Erro ao compartilhar texto:', error);
+        alert('Erro ao compartilhar o texto.');
+      }
+    } else {
+      alert('Seu dispositivo não suporta a funcionalidade de compartilhamento.');
+    }
   });
 });
