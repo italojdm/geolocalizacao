@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (navigator.canShare && navigator.canShare({ files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })] })) {
       try {
         const shareData = {
-          title: 'Cadastro de Cliente',
+          title: 'Captura de Coordenadas',
           text: textData,
           files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })],
         };
