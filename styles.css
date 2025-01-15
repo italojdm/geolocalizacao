@@ -37,12 +37,15 @@ h1,
 h2 {
   text-align: center;
   color: #333;
+  font-size: 1.5rem;
+  /* Tamanho maior e mais consistente */
 }
 
 label {
   display: block;
   margin: 10px 0 5px;
-  font-size: 14px;
+  font-size: 1rem;
+  /* Usar unidade rem para escalabilidade */
   color: #555;
 }
 
@@ -53,19 +56,27 @@ button {
   margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 14px;
+  font-size: 1rem;
   box-sizing: border-box;
+}
+
+input:focus,
+button:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.25);
 }
 
 button {
   background: #007bff;
   color: white;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
   background: #0056b3;
+  transform: scale(1.05);
 }
 
 #restart-process {
@@ -93,6 +104,8 @@ button:hover {
   border: 1px solid #ddd;
   border-radius: 5px;
   margin: 10px 0;
+  overflow: hidden;
+  /* Impede o transbordamento */
 }
 
 #photo-preview {
@@ -105,14 +118,14 @@ button:hover {
 /* Informações exibidas no centro */
 #info {
   text-align: center;
-  font-size: 16px;
+  font-size: 1rem;
   color: #555;
   line-height: 1.6;
 }
 
 footer {
   text-align: center;
-  font-size: 12px;
+  font-size: 0.875rem;
   color: #777;
   margin-top: 20px;
   padding: 10px;
@@ -120,15 +133,26 @@ footer {
   border-top: 1px solid #ddd;
 }
 
+/* Estilos responsivos */
 @media screen and (max-width: 500px) {
 
   h1,
   h2 {
-    font-size: 18px;
+    font-size: 1.25rem;
+    /* Ajusta o tamanho das fontes */
   }
 
   button {
-    font-size: 13px;
+    font-size: 0.875rem;
     padding: 8px;
+  }
+
+  #map {
+    height: 200px;
+    /* Diminui o mapa em telas menores */
+  }
+
+  #photo-preview {
+    max-width: 90%;
   }
 }
