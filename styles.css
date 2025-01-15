@@ -33,19 +33,16 @@ header {
   height: auto;
 }
 
-h1,
-h2 {
+h1, h2 {
   text-align: center;
   color: #333;
   font-size: 1.5rem;
-  /* Tamanho maior e mais consistente */
 }
 
 label {
   display: block;
   margin: 10px 0 5px;
   font-size: 1rem;
-  /* Usar unidade rem para escalabilidade */
   color: #555;
 }
 
@@ -105,7 +102,6 @@ button:hover {
   border-radius: 5px;
   margin: 10px 0;
   overflow: hidden;
-  /* Impede o transbordamento */
 }
 
 #photo-preview {
@@ -135,11 +131,8 @@ footer {
 
 /* Estilos responsivos */
 @media screen and (max-width: 500px) {
-
-  h1,
-  h2 {
+  h1, h2 {
     font-size: 1.25rem;
-    /* Ajusta o tamanho das fontes */
   }
 
   button {
@@ -149,7 +142,6 @@ footer {
 
   #map {
     height: 200px;
-    /* Diminui o mapa em telas menores */
   }
 
   #photo-preview {
