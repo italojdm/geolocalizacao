@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Captura de Coordenadas</title>
+    <meta name="description"
+        content="Página para capturar coordenadas de localização e foto do cliente, e compartilhá-las com segurança.">
+    <title>Captura e Compartilhamento de Localização - Gagliardi</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
@@ -14,26 +16,33 @@
         <header>
             <img id="header-image" src="gagliardi.png" alt="logotipo da Empresa">
         </header>
-        
-        <form id="client-form">
-            <label for="client-code">Digite o Código do Cliente:</label>
-            <input type="text" id="client-code" maxlength="7" placeholder="Ex: C123456" required>
-            <h2>Aponte a câmera para a fachada do cliente</h2>
-            <div class="buttons">
-                <button type="button" id="capture-photo">Capturar Coordenadas</button>
-            </div>
-        </form>
 
-        <div id="preview">
+        <section id="client-info">
+            <h2>Aponte a câmera para a fachada do cliente</h2>
+            <form id="client-form">
+                <label for="client-code" aria-label="Código do Cliente">Digite o Código do Cliente:</label>
+                <input type="text" id="client-code" maxlength="7" placeholder="Ex: C123456" required
+                    aria-describedby="client-code-info">
+                <button type="button" id="capture-photo" aria-label="Capturar Foto">Capturar Foto</button>
+            </form>
+        </section>
+
+        <section id="preview">
             <img id="photo-preview" alt="Prévia da Foto" style="display: none;">
             <p id="info"></p>
+        </section>
+
+        <section id="map-section">
+            <h2>Confira se o código do cliente e a localização no mapa estão corretos</h2>
+            <div id="map"></div>
+        </section>
+
+        <div class="buttons">
+            <button type="button" id="restart-process" style="display: none;"
+                aria-label="Cancelar Processo">Cancelar</button>
+            <button id="share-data" style="display: none;" aria-label="Compartilhar Localização">Compartilhar
+                Localização</button>
         </div>
-        
-        <h2>Confira se o código do cliente e a localização no mapa estão corretos</h2>
-        <div id="map"></div>
-        
-        <button type="button" id="restart-process" style="display: none;">Cancelar</button>
-        <button id="share-data" style="display: none;">Compartilhar Localização</button>
     </div>
 
     <footer>
