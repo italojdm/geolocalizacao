@@ -8,9 +8,7 @@
         content="Página para capturar coordenadas de localização e foto do cliente, e compartilhá-las com segurança.">
     <title>Captura e Compartilhamento de Localização - Gagliardi</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 </head>
 
 <body>
@@ -22,47 +20,41 @@
         <section id="client-info">
             <h2>Aponte a câmera para a fachada do cliente</h2>
             <form id="client-form">
-                <label for="client-code" aria-label="Código do Cliente">Digite o Código do Cliente:</label>
+                <label for="client-code">Digite o Código do Cliente:</label>
                 <div class="input-wrapper">
-                    <i class="fas fa-id-card"></i>
-                    <input type="text" id="client-code" maxlength="7" placeholder="Ex: C123456" required
-                        aria-describedby="client-code-info">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="client-code" maxlength="7" placeholder="Ex: C123456" required>
                 </div>
 
-                <label for="phone" aria-label="Telefone">Digite o telefone (opcional):</label>
+                <label for="phone">Telefone (opcional):</label>
                 <div class="input-wrapper">
                     <i class="fab fa-whatsapp"></i>
-                    <input type="tel" id="phone" placeholder="(11) 98765-4321" aria-describedby="phone-info">
+                    <input type="tel" id="phone" placeholder="(xx) 98765-4321" maxlength="15">
                 </div>
 
-                <label for="email" aria-label="E-mail">Digite o e-mail (opcional):</label>
+                <label for="email">E-mail (opcional):</label>
                 <div class="input-wrapper">
                     <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" placeholder="exemplo@dominio.com" aria-describedby="email-info">
+                    <input type="email" id="email" placeholder="exemplo@dominio.com">
                 </div>
 
-                <button type="button" id="capture-photo" aria-label="Capturar Foto">Capturar Foto</button>
+                <button type="button" id="capture-photo">Capturar Foto</button>
             </form>
         </section>
 
         <section id="preview">
-            <div id="photo-container">
-                <img id="photo-preview" alt="Prévia da Foto" style="display: none;">
-            </div>
+            <img id="photo-preview" alt="Prévia da Foto" style="display: none;">
             <p id="info"></p>
         </section>
 
         <section id="map-section">
-            <h2 id="map-title" style="display: none;">Confira se o código do cliente e a localização no mapa estão
-                corretos</h2>
+            <h2>Confira se o código do cliente e a localização no mapa estão corretos</h2>
             <div id="map"></div>
         </section>
 
         <div class="buttons">
-            <button type="button" id="restart-process" style="display: none;"
-                aria-label="Cancelar Processo">Cancelar</button>
-            <button id="share-data" style="display: none;" aria-label="Compartilhar Localização">Compartilhar
-                Localização</button>
+            <button type="button" id="restart-process" style="display: none;">Cancelar</button>
+            <button id="share-data" style="display: none;">Compartilhar Localização</button>
         </div>
     </div>
 
