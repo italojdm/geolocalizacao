@@ -38,14 +38,12 @@ h2 {
   text-align: center;
   color: #333;
   font-size: 1.5rem;
-  /* Tamanho maior e mais consistente */
 }
 
 label {
   display: block;
   margin: 10px 0 5px;
   font-size: 1rem;
-  /* Usar unidade rem para escalabilidade */
   color: #555;
 }
 
@@ -54,11 +52,13 @@ label {
   align-items: center;
   padding: 10px;
   margin-bottom: 15px;
-  border: none; /* Removido a borda */
+  border: none;
+  position: relative;
 }
 
 .input-wrapper i {
-  margin-right: 10px;
+  position: absolute;
+  left: 10px;
   color: #007bff;
   font-size: 1.2rem;
 }
@@ -66,7 +66,7 @@ label {
 input,
 button {
   width: 100%;
-  padding: 10px;
+  padding: 10px 10px 10px 40px; /* Espaço para o ícone */
   margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -118,8 +118,6 @@ button:hover {
   border: 1px solid #ddd;
   border-radius: 5px;
   margin: 10px 0;
-  overflow: hidden;
-  /* Impede o transbordamento */
 }
 
 #photo-preview {
@@ -154,7 +152,6 @@ footer {
   h1,
   h2 {
     font-size: 1.25rem;
-    /* Ajusta o tamanho das fontes */
   }
 
   button {
@@ -164,7 +161,6 @@ footer {
 
   #map {
     height: 200px;
-    /* Diminui o mapa em telas menores */
   }
 
   #photo-preview {
