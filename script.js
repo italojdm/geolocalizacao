@@ -1,55 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
   const clientCodeInput = document.getElementById('client-code');
-  const clientPhoneInput = document.getElementById('client-phone');
-  const clientEmailInput = document.getElementById('client-email');
   const capturePhotoButton = document.getElementById('capture-photo');
   const restartProcessButton = document.getElementById('restart-process');
   const photoPreview = document.getElementById('photo-preview');
   const info = document.getElementById('info');
   const shareButton = document.getElementById('share-data');
   const mapContainer = document.getElementById('map');
-  const loadingMessage = document.getElementById('loading-message');
-  const mapSection = document.getElementById('map-section');
+  const mapTitle = document.getElementById('map-title');
+  const phoneInput = document.getElementById('phone');
+  const emailInput = document.getElementById('email');
 
   let clientCode = '';
-  let clientPhone = '';
-  let clientEmail = '';
   let photoBlob = null;
   let locationData = {};
   let map = null;
 
-  // Limpar os campos ao recarregar a página
-  clientCodeInput.value = '';
-  clientPhoneInput.value = '';
-  clientEmailInput.value = '';
-  photoPreview.style.display = 'none';
-  info.innerHTML = '';
-  shareButton.style.display = 'none';
-  restartProcessButton.style.display = 'none';
-  mapSection.style.display = 'none';
-
+  // Validação do Código do Cliente
   const validateClientCode = (code) => /^C\d{6}$/.test(code);
   const sanitizeClientCode = (code) => code.toUpperCase().replace(/[^C0-9]/g, '');
 
   // Validação do telefone
-  const validatePhone = (phone) => /\(\d{2}\) \d{5}-\d{4}/.test(phone);
-
-  // Validação do e-mail
-  const validateEmail = (email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
-
-  const formatPhone = (phone) => {
-    phone = phone.replace(/\D/g, '');
-    if (phone.length <= 2) {
-      return `(${phone}`;
-    } else if (phone.length <= 7) {
-      return `(${phone.slice(0, 2)}) ${phone.slice(2)}`;
-    } else {
-      return `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7, 11)}`;
+  const validatePhone = (phone) => /^\(\d{2}\)\s?\d{5}-\d{4}$/.test(phone);
+  const sanitizePhone = (phone) => {
+    const cleaned = phone.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+    if (cleaned.length === 11) {
+      return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
     }
+    return phone;
   };
 
+  // Validação de e-mail
+  const validateEmail = (email) => /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email);
+
+  // Função para capturar a foto
   const capturePhoto = async () => {
-    loadingMessage.textContent = "Acessando a câmera...";
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { exact: "environment" } },
@@ -74,20 +58,19 @@ document.addEventListener('DOMContentLoaded', () => {
       photoBlob = await (await fetch(photoDataURL)).blob();
       photoPreview.src = photoDataURL;
       photoPreview.style.display = 'block';
-      loadingMessage.textContent = "";
-
     } catch (error) {
-      loadingMessage.textContent = "";
       console.error('Erro ao acessar a câmera:', error);
-      alert('Erro ao acessar a câmera! Verifique se a câmera está disponível.');
+      alert('Erro ao acessar a câmera!');
     }
   };
 
+  // Função para obter a localização do usuário
   const getUserLocation = () =>
     new Promise((resolve, reject) =>
       navigator.geolocation.getCurrentPosition(resolve, reject)
     );
 
+  // Atualiza o mapa com a localização
   const updateMap = (latitude, longitude) => {
     if (!map) {
       map = L.map('map').setView([latitude, longitude], 15);
@@ -105,28 +88,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Capturar foto e mostrar a localização no mapa
   capturePhotoButton.addEventListener('click', async () => {
     clientCode = sanitizeClientCode(clientCodeInput.value);
-    clientPhone = clientPhoneInput.value || 'Não informado';
-    clientEmail = clientEmailInput.value || 'Não informado';
+    const phone = sanitizePhone(phoneInput.value);
+    const email = emailInput.value;
 
     if (!validateClientCode(clientCode)) {
       alert('O código do cliente deve começar com "C" seguido de 6 números.');
       return;
     }
 
-    if (clientPhone !== 'Não informado' && !validatePhone(clientPhone)) {
-      alert('O telefone deve seguir o formato (XX) XXXXX-XXXX.');
+    if (phone && !validatePhone(phone)) {
+      alert('Telefone inválido. Utilize o formato: (11) 98765-4321.');
       return;
     }
 
-    if (clientEmail !== 'Não informado' && !validateEmail(clientEmail)) {
-      alert('O e-mail deve ser válido (exemplo@dominio.com).');
+    if (email && !validateEmail(email)) {
+      alert('E-mail inválido. Utilize o formato: exemplo@dominio.com.');
       return;
     }
 
     try {
       await capturePhoto();
+
       const position = await getUserLocation();
       locationData = {
         latitude: position.coords.latitude,
@@ -135,29 +120,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
       info.innerHTML = `
         <strong>Código do Cliente:</strong><br>${clientCode}<br>
-        <strong>Telefone:</strong><br>${clientPhone}<br>
-        <strong>E-mail:</strong><br>${clientEmail}<br>
+        <strong>Telefone:</strong><br>${phone || 'Não fornecido'}<br>
+        <strong>E-mail:</strong><br>${email || 'Não fornecido'}<br>
         <strong>Latitude:</strong><br>${locationData.latitude.toFixed(6)}<br>
         <strong>Longitude:</strong><br>${locationData.longitude.toFixed(6)}
       `;
 
-      mapSection.style.display = 'block';
+      mapTitle.style.display = 'block';
       shareButton.style.display = 'block';
       restartProcessButton.style.display = 'block';
       updateMap(locationData.latitude, locationData.longitude);
-
     } catch (error) {
       console.error('Erro ao acessar a localização:', error);
-      alert('Erro ao acessar a localização! Verifique as permissões de localização.');
+      alert('Erro ao acessar a localização!');
     }
   });
 
+  // Reiniciar o processo
   restartProcessButton.addEventListener('click', () => {
     location.reload();
   });
 
+  // Compartilhar os dados
   shareButton.addEventListener('click', async () => {
-    const textData = `Código do Cliente: ${clientCode}\nTelefone: ${clientPhone}\nE-mail: ${clientEmail}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}`;
+    const textData = `Código do Cliente: ${clientCode}\nTelefone: ${phoneInput.value}\nE-mail: ${emailInput.value}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}`;
 
     if (navigator.canShare && navigator.canShare({ files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })] })) {
       try {
@@ -183,11 +169,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  clientPhoneInput.addEventListener('input', () => {
-    clientPhoneInput.value = formatPhone(clientPhoneInput.value);
-  });
-
+  // Validação do código do cliente
   clientCodeInput.addEventListener('input', () => {
     clientCodeInput.value = sanitizeClientCode(clientCodeInput.value);
+  });
+
+  phoneInput.addEventListener('input', () => {
+    phoneInput.value = sanitizePhone(phoneInput.value);
   });
 });
