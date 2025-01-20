@@ -50,10 +50,8 @@ label {
 .input-wrapper {
   display: flex;
   align-items: center;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: none;
   position: relative;
+  margin-bottom: 15px;
 }
 
 .input-wrapper i {
@@ -66,7 +64,8 @@ label {
 input,
 button {
   width: 100%;
-  padding: 10px 10px 10px 40px; /* Espaço para o ícone */
+  padding: 10px 10px 10px 40px;
+  /* Espaço para o ícone */
   margin-bottom: 15px;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -149,6 +148,7 @@ footer {
 
 /* Estilos responsivos */
 @media screen and (max-width: 500px) {
+
   h1,
   h2 {
     font-size: 1.25rem;
