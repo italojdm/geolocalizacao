@@ -1,30 +1,55 @@
 document.addEventListener('DOMContentLoaded', () => {
   const clientCodeInput = document.getElementById('client-code');
+  const clientPhoneInput = document.getElementById('client-phone');
+  const clientEmailInput = document.getElementById('client-email');
   const capturePhotoButton = document.getElementById('capture-photo');
   const restartProcessButton = document.getElementById('restart-process');
   const photoPreview = document.getElementById('photo-preview');
   const info = document.getElementById('info');
   const shareButton = document.getElementById('share-data');
   const mapContainer = document.getElementById('map');
+  const loadingMessage = document.getElementById('loading-message');
+  const mapSection = document.getElementById('map-section');
 
   let clientCode = '';
+  let clientPhone = '';
+  let clientEmail = '';
   let photoBlob = null;
   let locationData = {};
   let map = null;
 
-  // Validação do Código do Cliente
-  clientCodeInput.addEventListener('input', () => {
-    clientCodeInput.value = clientCodeInput.value.toUpperCase().replace(/[^C0-9]/g, '');
-  });
+  // Limpar os campos ao recarregar a página
+  clientCodeInput.value = '';
+  clientPhoneInput.value = '';
+  clientEmailInput.value = '';
+  photoPreview.style.display = 'none';
+  info.innerHTML = '';
+  shareButton.style.display = 'none';
+  restartProcessButton.style.display = 'none';
+  mapSection.style.display = 'none';
 
-  capturePhotoButton.addEventListener('click', async () => {
-    clientCode = clientCodeInput.value;
+  const validateClientCode = (code) => /^C\d{6}$/.test(code);
+  const sanitizeClientCode = (code) => code.toUpperCase().replace(/[^C0-9]/g, '');
 
-    if (!/^C\d{6}$/.test(clientCode)) {
-      alert('O código do cliente deve começar com "C" seguido de 6 números.');
-      return;
+  // Validação do telefone
+  const validatePhone = (phone) => /\(\d{2}\) \d{5}-\d{4}/.test(phone);
+
+  // Validação do e-mail
+  const validateEmail = (email) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+
+  const formatPhone = (phone) => {
+    phone = phone.replace(/\D/g, '');
+    if (phone.length <= 2) {
+      return `(${phone}`;
+    } else if (phone.length <= 7) {
+      return `(${phone.slice(0, 2)}) ${phone.slice(2)}`;
+    } else {
+      return `(${phone.slice(0, 2)}) ${phone.slice(2, 7)}-${phone.slice(7, 11)}`;
     }
+  };
 
+  const capturePhoto = async () => {
+    loadingMessage.textContent = "Acessando a câmera...";
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: { exact: "environment" } },
@@ -47,47 +72,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const photoDataURL = await capture;
       photoBlob = await (await fetch(photoDataURL)).blob();
-
       photoPreview.src = photoDataURL;
       photoPreview.style.display = 'block';
+      loadingMessage.textContent = "";
 
-      navigator.geolocation.getCurrentPosition((position) => {
-        locationData = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        };
-
-        info.innerHTML = `
-          <strong>Código do Cliente:</strong><br>${clientCode}<br>
-          <strong>Latitude:</strong><br>${locationData.latitude.toFixed(6)}<br>
-          <strong>Longitude:</strong><br>${locationData.longitude.toFixed(6)}
-        `;
-
-        shareButton.style.display = 'block';
-        restartProcessButton.style.display = 'block';
-
-        // Exibe a mensagem e o mapa após capturar as coordenadas
-        document.getElementById('location-info').style.display = 'block';
-        document.getElementById('map').style.display = 'block';
-
-        if (!map) {
-          map = L.map('map').setView([locationData.latitude, locationData.longitude], 15);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors',
-          }).addTo(map);
-
-          L.marker([locationData.latitude, locationData.longitude])
-            .addTo(map)
-            .bindPopup(`Você está aqui!<br>Lat: ${locationData.latitude.toFixed(6)}<br>Lng: ${locationData.longitude.toFixed(6)}`)
-            .openPopup();
-        } else {
-          map.setView([locationData.latitude, locationData.longitude], 15);
-        }
-      });
     } catch (error) {
-      console.error('Erro ao acessar a câmera ou localização:', error);
-      alert('Erro ao acessar a câmera ou a localização!');
+      loadingMessage.textContent = "";
+      console.error('Erro ao acessar a câmera:', error);
+      alert('Erro ao acessar a câmera! Verifique se a câmera está disponível.');
+    }
+  };
+
+  const getUserLocation = () =>
+    new Promise((resolve, reject) =>
+      navigator.geolocation.getCurrentPosition(resolve, reject)
+    );
+
+  const updateMap = (latitude, longitude) => {
+    if (!map) {
+      map = L.map('map').setView([latitude, longitude], 15);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors',
+      }).addTo(map);
+
+      L.marker([latitude, longitude])
+        .addTo(map)
+        .bindPopup(`Você está aqui!<br>Lat: ${latitude.toFixed(6)}<br>Lng: ${longitude.toFixed(6)}`)
+        .openPopup();
+    } else {
+      map.setView([latitude, longitude], 15);
+    }
+  };
+
+  capturePhotoButton.addEventListener('click', async () => {
+    clientCode = sanitizeClientCode(clientCodeInput.value);
+    clientPhone = clientPhoneInput.value || 'Não informado';
+    clientEmail = clientEmailInput.value || 'Não informado';
+
+    if (!validateClientCode(clientCode)) {
+      alert('O código do cliente deve começar com "C" seguido de 6 números.');
+      return;
+    }
+
+    if (clientPhone !== 'Não informado' && !validatePhone(clientPhone)) {
+      alert('O telefone deve seguir o formato (XX) XXXXX-XXXX.');
+      return;
+    }
+
+    if (clientEmail !== 'Não informado' && !validateEmail(clientEmail)) {
+      alert('O e-mail deve ser válido (exemplo@dominio.com).');
+      return;
+    }
+
+    try {
+      await capturePhoto();
+      const position = await getUserLocation();
+      locationData = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      };
+
+      info.innerHTML = `
+        <strong>Código do Cliente:</strong><br>${clientCode}<br>
+        <strong>Telefone:</strong><br>${clientPhone}<br>
+        <strong>E-mail:</strong><br>${clientEmail}<br>
+        <strong>Latitude:</strong><br>${locationData.latitude.toFixed(6)}<br>
+        <strong>Longitude:</strong><br>${locationData.longitude.toFixed(6)}
+      `;
+
+      mapSection.style.display = 'block';
+      shareButton.style.display = 'block';
+      restartProcessButton.style.display = 'block';
+      updateMap(locationData.latitude, locationData.longitude);
+
+    } catch (error) {
+      console.error('Erro ao acessar a localização:', error);
+      alert('Erro ao acessar a localização! Verifique as permissões de localização.');
     }
   });
 
@@ -96,9 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   shareButton.addEventListener('click', async () => {
-    const textData = `Código do Cliente: ${clientCode}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}`;
+    const textData = `Código do Cliente: ${clientCode}\nTelefone: ${clientPhone}\nE-mail: ${clientEmail}\nLatitude: ${locationData.latitude.toFixed(6)}\nLongitude: ${locationData.longitude.toFixed(6)}`;
 
-    // Verifica se o navegador suporta compartilhamento de arquivos
     if (navigator.canShare && navigator.canShare({ files: [new File([photoBlob], `${clientCode}.jpg`, { type: 'image/jpeg' })] })) {
       try {
         const shareData = {
@@ -112,15 +172,22 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Erro ao compartilhar os dados.');
       }
     } else if (navigator.share) {
-      // Caso não suporte arquivos, compartilha apenas o texto
       try {
-        await navigator.share({ title: 'Captura de Coordenadas', text: textData });
+        await navigator.share({ title: 'Cadastro de Cliente', text: textData });
       } catch (error) {
-        console.log('Erro ao compartilhar:', error);
-        alert('Erro ao compartilhar os dados.');
+        console.log('Erro ao compartilhar texto:', error);
+        alert('Erro ao compartilhar o texto.');
       }
     } else {
-      alert('O seu navegador não suporta o recurso de compartilhamento.');
+      alert('Seu dispositivo não suporta a funcionalidade de compartilhamento.');
     }
+  });
+
+  clientPhoneInput.addEventListener('input', () => {
+    clientPhoneInput.value = formatPhone(clientPhoneInput.value);
+  });
+
+  clientCodeInput.addEventListener('input', () => {
+    clientCodeInput.value = sanitizeClientCode(clientCodeInput.value);
   });
 });
