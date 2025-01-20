@@ -38,14 +38,12 @@ h2 {
   text-align: center;
   color: #333;
   font-size: 1.5rem;
-  /* Tamanho maior e mais consistente */
 }
 
 label {
   display: block;
   margin: 10px 0 5px;
   font-size: 1rem;
-  /* Usar unidade rem para escalabilidade */
   color: #555;
 }
 
@@ -105,7 +103,6 @@ button:hover {
   border-radius: 5px;
   margin: 10px 0;
   overflow: hidden;
-  /* Impede o transbordamento */
 }
 
 #photo-preview {
@@ -113,13 +110,19 @@ button:hover {
   height: auto;
   border: 1px solid #ddd;
   border-radius: 5px;
-  margin: 10px 0;
   display: block;
-  margin-left: auto;
-  margin-right: auto;
+  width: 100%;
 }
 
-/* Informações exibidas no centro */
+/* Contêiner para centralizar a foto */
+#photo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  width: 100%;
+}
+
 #info {
   text-align: center;
   font-size: 1rem;
@@ -143,7 +146,6 @@ footer {
   h1,
   h2 {
     font-size: 1.25rem;
-    /* Ajusta o tamanho das fontes */
   }
 
   button {
@@ -153,16 +155,9 @@ footer {
 
   #map {
     height: 200px;
-    /* Diminui o mapa em telas menores */
   }
 
   #photo-preview {
     max-width: 90%;
-  }
-
-  #loading-message {
-    font-size: 0.875rem;
-    color: #007bff;
-    margin-top: 10px;
   }
 }
