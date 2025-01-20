@@ -19,7 +19,11 @@
 
         <section id="client-info">
             <form id="client-form">
-                <label for="client-code" aria-label="Código do Cliente">Código do Cliente*:</label>
+
+                <label for="client-code" aria-label="Código do Cliente">
+                    <img src="cardcode.png" alt="icone cliente"> Código do Cliente*:
+                </label>
+
                 <input type="text" id="client-code" maxlength="7" placeholder="Ex: C123456" required
                     aria-describedby="client-code-info">
 
@@ -28,7 +32,7 @@
 
                 <label for="email" aria-label="E-mail">E-mail do Cliente:</label>
                 <input type="email" id="email" placeholder="exemplo@dominio.com" aria-describedby="email-info">
-                
+
                 <h2>Aponte a câmera para a fachada do cliente</h2>
                 <button type="button" id="capture-photo" aria-label="Capturar Foto">Capturar Foto e Coordenadas</button>
             </form>
