@@ -38,13 +38,29 @@ h2 {
   text-align: center;
   color: #333;
   font-size: 1.5rem;
+  /* Tamanho maior e mais consistente */
 }
 
 label {
   display: block;
   margin: 10px 0 5px;
   font-size: 1rem;
+  /* Usar unidade rem para escalabilidade */
   color: #555;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: none; /* Removido a borda */
+}
+
+.input-wrapper i {
+  margin-right: 10px;
+  color: #007bff;
+  font-size: 1.2rem;
 }
 
 input,
@@ -103,24 +119,17 @@ button:hover {
   border-radius: 5px;
   margin: 10px 0;
   overflow: hidden;
+  /* Impede o transbordamento */
 }
 
 #photo-preview {
   max-width: 100%;
-  height: auto;
   border: 1px solid #ddd;
   border-radius: 5px;
-  display: block;
-  width: 100%;
-}
-
-/* Contêiner para centralizar a foto */
-#photo-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin: 10px 0;
-  width: 100%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #info {
@@ -142,10 +151,10 @@ footer {
 
 /* Estilos responsivos */
 @media screen and (max-width: 500px) {
-
   h1,
   h2 {
     font-size: 1.25rem;
+    /* Ajusta o tamanho das fontes */
   }
 
   button {
@@ -155,6 +164,7 @@ footer {
 
   #map {
     height: 200px;
+    /* Diminui o mapa em telas menores */
   }
 
   #photo-preview {
