@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Página para capturar coordenadas de localização e foto do cliente, e compartilhá-las com segurança.">
+    <title>Localize - Resultado</title>
+    <link rel="icon" type="image/png" href="assets/images/gps.png">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+    <div class="container"><br><br>
+        <header>
+            <img id="header-image" src="assets/images/gagliardi.png" alt="Grupo Gagliardi"><br><br><br>
+        </header>
+
+        <section id="result-info">
+            <h2 id="result-title">Informações do Cliente</h2>
+            <p id="info"></p>
+
+            <h2>Localização no Mapa</h2>
+            <div id="map"></div>
+        </section>
+
+        <div class="buttons">
+            <button type="button" id="restart-process" aria-label="Cancelar Processo">Cancelar</button>
+            <button id="share-data" aria-label="Compartilhar Localização">Compartilhar Localização</button>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 - O Grupo Gagliardi não armazena ou compartilha as coordenadas obtidas sem sua permissão - Todos os
+        direitos reservados.
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="result.js"></script>
+</body>
+
+</html>
